@@ -1,0 +1,367 @@
+/*
+	CSS       : OutlineView.css
+	Test      : GanttWithTimeruler.html, GanttWithTimephaseRows.html
+
+	-----------------------------------------------------------------------------------------
+
+	Example: 
+	
+	<div class="scrollview outlineview"> 
+		<div class="horizontal ruler">
+
+				<table class='header'>
+					<colgroup>
+					   <col width="100px"/>
+					   <col width="200px"/>
+					</colgroup>
+					<tbody id='outlineHead'>
+						<tr>
+							<td><div>Headline 1</div></td>
+							<td><div>Headline 2</div></td>
+							<td></td>		<!-- Important: Do not delete this element.
+															It is the one with a variable width which is needed to make table:min-width work -->	
+						</tr>
+					</thead>
+				</table>
+			
+		</div>
+		<div class="main content">
+
+			<table id='outlineTable'>
+				<colgroup>
+				   <col width="100px"/>
+				   <col width="200px"/>							   
+				</colgroup>
+
+				<tbody id='outlineBody'>
+					<tr>
+						<td><div>Row 1</div></td>
+						<td><div>Row 2</div></td>
+					</tr>					
+					
+					...
+					
+				</tbody>
+			</table>
+
+		</div>
+	</div>
+
+
+*/
+
+/* Constants used multiple times in this style sheet:
+	
+	borderColor    :		#9B9B9B
+
+*/
+
+/* Outline view */
+
+.outlineview {
+/*    zoom: 125%; */
+}
+
+.outlineview span,
+.outlineview .header div{
+    cursor:default;
+}
+
+.outlineview table {
+	min-width: 100%;
+	width: 100%;
+	border-spacing: 0;
+	border-collapse: separate;
+	table-layout: fixed;
+	padding: 0px;
+    font-size:inherit;
+}    	
+
+.outlineview table .row > td.cell > div{
+    margin-left:1px;    /* distance from border to cell content */
+}
+
+.outlineview table .row > td.cell span { /* This is the text inside cells */
+/*    vertical-align:top; */
+    vertical-align:baseline; 
+    display:inline; /* needs to be inline and not inline-block in order to show ellipsis*/
+}
+
+.outlineview table .row > td.cell img {
+    vertical-align:baseline;
+    float:left;
+    margin-right:0.3em;
+}
+
+.outlineview table .row > td.cell img.checkBoxImage {
+    float:none;
+}
+
+.outlineview table .row > td.cell {
+    position:relative;
+}
+
+.outlineview table .row > td.cell a {
+    display:inline-block;
+}
+
+/* 
+   Firefox < version 30 does not respect "position:relative" on table cells. 
+   We wrap the content into a div with this class where needed (for example in media cells) 
+*/
+.outlineview table .row > td.cell .geckoFix {
+    position: relative;
+}
+
+.outlineview table .row > td.cell a .mediaViewer {
+    position:absolute;
+    top:0px;
+    bottom:0px;
+    left:0px;
+    right:0px;
+}
+
+.outlineview table .row > td.cell a .mediaViewer:hover {
+    background-image: url(ERROR: Unknown resource net.projectwizards.Weblitz/Eye.svg);
+    background-repeat: no-repeat;
+    background-size:40px 22px;
+    background-position:50% 50%;
+    opacity:0.7;
+}
+
+
+/* if a cell contains an image we want to indent the text on every line (if it wraps) */
+.outlineview table .row > td.cell img + span {
+    display:table-cell;
+}
+
+.outlineview table .row > td.cell div.WordWrappingInAvailableSpace img + span {
+    display:inline;
+}
+
+
+/* Disclosure Buttons */
+
+.outlineview table .row > td.cell .disclosure{
+    float:left;
+    display:block;
+    width:0.8em;
+    height:0.8em;
+    background-repeat: no-repeat;
+}
+
+.outlineview table .row.isCollapsed > td.cell .disclosure.filled{
+	background-image: url(net.projectwizards.Weblitz.MEDisclosureFilledDown.svg);
+    margin-top: 0.25em;
+    -webkit-transform:rotate(-90deg);
+    transform:rotate(-90deg);
+}
+
+.outlineview table .row > td.cell .disclosure.filled{
+	background-image: url(net.projectwizards.Weblitz.MEDisclosureFilledDown.svg);
+    margin-top: 0.3em;
+}
+
+.outlineview table .row.isCollapsed > td.cell .disclosure.empty{
+	background-image: url(net.projectwizards.Weblitz.MEDisclosureEmptyDown.svg);
+    margin-top: 0.15em;
+    -webkit-transform:rotate(-90deg);
+    transform:rotate(-90deg);
+}
+
+.outlineview table .row > td.cell .disclosure.empty{
+	background-image: url(net.projectwizards.Weblitz.MEDisclosureEmptyDown.svg);
+    margin-top: 0.25em;
+}
+
+.outlineview table .row td.cell .trait {
+    margin-right:2px;
+    display:inline-block;
+    height:1em;
+    padding-top:0.1em;
+}
+
+.outlineview table .row td.cell .checkBoxImage {
+    height:1.1em;
+}
+
+.outlineview table .row td {
+    padding:0px;
+}
+
+.outlineview table .row .otherTableRowDiv {
+    width: 0px;
+}
+
+.background .row.selected,
+.background .row.selected:nth-child(2n+1),
+.background .row.selected .cell,
+.background .row.selected:nth-child(2n+1) .cell {
+    background-color:#DFE9F8 !important;
+    position:relative;
+}
+
+
+/* We need to give the last td an own class (lastCell) in order to make this rule not apply to tds in tables inside a cell. */
+.outlineview table .row td.lastCell {
+    position:relative;
+}
+
+.background .row > td.ganttCell {
+    position:relative;
+    padding:0px;
+    vertical-align:middle;
+    overflow: hidden;
+}
+
+.background .row.selectionTop > td.cell::before,
+.background .row.selectionTop > td.lastCell::before,
+.background .row.selectionTop > td.ganttCell::before
+{
+    content: "";
+    background-color: #3E78D4;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    height: 1px;
+    display: block;
+    z-index: 10;
+}
+
+.background .row.selectionBottom > td.cell::after,
+.background .row.selectionBottom > td.lastCell::after,
+.background .row.selectionBottom > td.ganttCell::after
+{
+    content: "";
+    background-color: #3E78D4;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    height: 1px;
+    display: block;
+    z-index: 10;    
+}
+
+.outlineview table thead th:last-child {
+	border-right: none;
+}    	
+
+.outlineview .header {
+    border-bottom: 1px solid #9B9B9B;
+}
+
+.outlineview .header td{
+	word-wrap: break-word;
+
+	/*
+		In IE9 applying a filter results in non visible borders.
+		In order to fix this we use an svg image for the gradient. 
+		The image is positioned in such a way that aliasing effects at the borders are not visible.
+	*/
+	/*
+	background-image: url(ERROR: Unknown resource net.projectwizards.Weblitz/OutlineHeaderGradient.svg);
+	background-size: 200% 100%;
+	background-position: -100% 0px;
+    */
+    
+	border-right: 1px solid #9B9B9B;	    /* borderColor */
+    position:relative;
+}
+
+.outlineview .header .handle{
+    width:8px;
+    top:0;
+    bottom:-500px;     /* in IE11 the height is not right if bottom is set to 0px */
+    position:absolute;
+/*    background-color:rgba(255,0,0,0.5); */
+    right:-4px;
+    cursor: col-resize;
+    z-index:10000;
+}
+
+.outlineview .header td:last-child {
+	border-right: none !important;
+}
+
+/* The related background color in Merlin is defined in METheme defaultProjectViewBackgroundColor */
+.outlineview .background {
+    background-color: rgba(251, 251, 251, 1.0);
+}
+
+/* 
+    Classes for supporting different text wrapping methods 
+    NOTE: Not all values lead to the same result as in Merlin.
+*/
+
+.WordWrapping {
+    word-wrap: normal;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.WordWrappingInAvailableSpace {
+    white-space: nowrap;
+    text-overflow: ellipsis; /* was ellipsis */
+    overflow: hidden;
+}
+
+.Clipping {
+    white-space: nowrap;
+    text-overflow: clip;
+    overflow: hidden;
+}
+
+.TruncatingHead {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.TruncatingTail {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.TruncatingMiddle {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.FontBasedImageSizingVertically {
+    height: 1em;
+    width: auto;
+    padding-top: 0.15em;
+}
+
+/* The isReadOnly class is added in MEWOutlineComponent-Styling. 
+  Search for PWStyleContextIsReadOnlyCSSClass.
+*/
+
+.isReadOnly > div span {
+    opacity: 0.4;
+}
+
+
+.nolayout {
+//    display: none;
+}
+
+.debug_nolayout {
+    display: none;
+}
+
+.alL {
+    text-align:left;
+}
+
+.alC {
+    text-align:center;
+}
+
+.alR {
+    text-align:right;
+}

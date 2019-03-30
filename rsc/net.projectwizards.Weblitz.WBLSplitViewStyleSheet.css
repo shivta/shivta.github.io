@@ -1,0 +1,260 @@
+/*
+	CSS       : SplitView.css
+	Javascript: PWSplitViewController.js
+	Test      : SplitView.html
+	
+	-----------------------------------------------------------------------------------------
+	
+	Example:
+	
+	<!-- A splitview consists of two parts which are separated by a splitter. The splitter can be moved and then
+		 the parts are resized accordingly. The splitview can divide the parts horizontally or vertically. 
+		 Which dividing method is used is determined by its class. Use "splitview vertical" for a vertical splitter and 
+		 "splitview horizontal" for a horizontal splitter. 
+
+		 The markup consists of two splitters. One in each part. This is somewhat counter intuitive. But it is needed, 
+		 because the split position is given in relative values and the thickness of the splitter is given in absolute values. 
+		 Until all common browsers accept calc() values in CSS styles we need to do it this way.
+
+		 See PWSplitView.js for more information about the behavior of a splitview. -->
+
+	<div class="splitview vertical" style="height: 50%; margin: 10px;">
+
+		<!-- This is the first part. Assign a width to set its initial width -->
+		<div class="part" style="background-color: yellow; width: 30%;">
+			
+			<!-- This is the splitter inside the first part. It is visible if the second part is collapse/not visible. -->
+            <div class="splitter">
+
+				<!-- "effectiveSplitter" is a transparent area in front of the visible splitter which is slightly enlarged.
+					 If you move the mouse over this area, the mouse cursor changes to col-resize. If you click and than drag into
+					 it, you can move the splitter.-->
+                <div class="effectiveSplitter"></div>
+            </div>	
+			
+			<!-- "contentWrapper" contains the content of the first part. 
+			     In this document this is a pre element which is filled with text by javascript. -->
+            <div class="contentWrapper">
+            
+            	...
+            
+            </div>
+            
+		</div>	
+
+		<!-- This is the second part which has the same structure as the first part -->
+        <div class="part" style="background-color: pink;">
+            <div class="splitter">
+                <div class="effectiveSplitter"></div>
+            </div>	
+            <div class="contentWrapper">
+
+				...
+
+            </div>	
+        </div>	
+	</div>		
+	
+*/
+
+
+/* Constants used multiple times in this style sheet:
+	
+	smallSplitterColor    :		#9B9B9B
+	gradientFallbackColor :  	#F1F1F1
+	firstGradientColor    :     #FAFAFA  
+	secondGradientColor   :    	#E8E8E8  		
+	
+	knobURL				  : 	WBLSplitViewKnob.png
+	smallSplitterThickness: 	1px
+	
+*/
+
+
+/* Splitview ---------------------------------------------- */
+
+.splitview {
+    border: 1px solid #9B9B9B; /* smallSplitterColor */
+    overflow: hidden;	/* Never show scrollbars on this level */
+    position: relative;
+}
+
+/* This rule was too generic. It slows down the scrolling performance in WebKit based browsers.
+.splitview div {
+    position: relative;
+}
+*/
+
+.splitview .part {
+    position: relative;
+}
+
+.splitview div .splitter {
+    background-color: #9B9B9B; /* smallSplitterColor */
+    position: absolute;
+}
+
+.splitview div .splitter .effectiveSplitter {
+    position: absolute;
+    z-index: 10000;		/* Put the effective splitter in front of all othere elements */
+}
+
+.splitview div .contentWrapper {
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+/*	overflow: auto;*/		/* Show scrollbars if needed */
+	position: absolute;
+}
+
+/* Vertical splitview ---------------------------------------------- */
+
+.splitview.vertical {
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.splitview.vertical .part {
+    float: left;
+    height: 100%;
+}
+
+.splitview.vertical .part .splitter {
+    height: 100%;
+    min-width: 1px;	/* smallSplitterThickness */
+    width: 1px;		/* smallSplitterThickness */
+}
+
+.splitview.vertical .part .splitter .effectiveSplitter {
+    cursor: col-resize;
+    height: 100%;
+    left: -6px;		/* Move the effective splitter a little bit to the left ... */
+    width: 15px;	/* ... and enlarge it.                                      */
+   /*background-color:rgba(255,0,0,0.2);*/
+}
+
+.splitview.vertical .part .splitter.bold {
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-color: #F1F1F1; /* gradientFallbackColor */
+    background-image: url(net.projectwizards.Weblitz.WBLSplitViewKnob.png),    -moz-linear-gradient(left , #FAFAFA 0%, #E8E8E8 100%); /* knobURL, firstGradientColor, secon dGradientColor */
+    background-image: url(net.projectwizards.Weblitz.WBLSplitViewKnob.png), -webkit-linear-gradient(left , #FAFAFA 0%, #E8E8E8 100%);
+    background-image: url(net.projectwizards.Weblitz.WBLSplitViewKnob.png),      -o-linear-gradient(left , #FAFAFA 0%, #E8E8E8 100%);
+    background-image: url(net.projectwizards.Weblitz.WBLSplitViewKnob.png),     -ms-linear-gradient(left , #FAFAFA 0%, #E8E8E8 100%);
+    background-image: url(net.projectwizards.Weblitz.WBLSplitViewKnob.png),         linear-gradient(left , #FAFAFA 0%, #E8E8E8 100%);
+    background-origin: padding-box;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: auto auto;
+}
+
+.splitview.vertical .part:first-of-type .splitter {
+    right: 0; /* Glue the splitter to the right side of the left part */
+}
+
+.splitview.vertical .part:first-of-type .splitter.bold {
+    border-left: 1px solid #9B9B9B; /* smallSplitterColor */
+    width: 9px;
+}
+
+.splitview.vertical .part:first-of-type .splitter.bold.moving {
+    border-right: 1px solid #9B9B9B; /* smallSplitterColor */
+    width: 10px;
+}
+
+.splitview.vertical .part:first-of-type .contentWrapper {
+    right: 1px; /* smallSplitterThickness */
+}
+
+.splitview.vertical .part:last-of-type .splitter {
+    left: 0;  /* Glue the splitter to the left side of the right part */
+}
+
+.splitview.vertical .part:last-of-type .splitter.bold {
+    border-right: 1px solid #9B9B9B; /* smallSplitterColor */
+    width: 9px;
+}
+
+.splitview.vertical .part:last-of-type .splitter.bold.moving {
+    border-left: 1px solid #9B9B9B; /* smallSplitterColor */
+    width: 10px;
+}
+
+.splitview.vertical .part:last-of-type .contentWrapper {
+    left: 0;
+}
+
+/* Horizontal splitview ---------------------------------------------- */
+
+.splitview.horizontal {
+    width: 100%;
+}
+
+.splitview.horizontal .part {
+    float: none;
+}
+
+.splitview.horizontal .part .splitter {
+    height: 1px;		/* smallSplitterThickness */
+    min-height: 1px;	/* smallSplitterThickness */
+    width: 100%;
+}
+
+.splitview.horizontal .part .splitter .effectiveSplitter {
+    cursor: row-resize;
+    height: 7px;
+    top: -2px;
+    width: 100%;
+}
+
+.splitview.horizontal .part .splitter.bold {
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-color: #F1F1F1; /* gradientFallbackColor */
+    background-image: url(net.projectwizards.Weblitz.WBLSplitViewKnob.png),    -moz-linear-gradient(top , #FAFAFA 0%, #E8E8E8 100%); /* knobURL, firstGradientColor, secon dGradientColor */
+    background-image: url(net.projectwizards.Weblitz.WBLSplitViewKnob.png), -webkit-linear-gradient(top , #FAFAFA 0%, #E8E8E8 100%);
+    background-image: url(net.projectwizards.Weblitz.WBLSplitViewKnob.png),      -o-linear-gradient(top , #FAFAFA 0%, #E8E8E8 100%);
+    background-image: url(net.projectwizards.Weblitz.WBLSplitViewKnob.png),     -ms-linear-gradient(top , #FAFAFA 0%, #E8E8E8 100%);
+    background-image: url(net.projectwizards.Weblitz.WBLSplitViewKnob.png),         linear-gradient(top , #FAFAFA 0%, #E8E8E8 100%);
+    background-origin: padding-box;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: auto auto;
+}
+
+.splitview.horizontal .part:first-of-type .contentWrapper {
+    bottom: 1px;	/* smallSplitterThickness */
+}
+
+.splitview.horizontal .part:first-of-type .splitter {
+    bottom: 0; /* Glue the splitter to the bottom of the top part */
+}
+
+.splitview.horizontal .part:first-of-type .splitter.bold {
+    border-top: 1px solid #9B9B9B; /* smallSplitterColor */
+    height: 9px;
+}
+
+.splitview.horizontal .part:first-of-type .splitter.bold.moving {
+    border-bottom: 1px solid #9B9B9B; /* smallSplitterColor */
+    height: 10px;
+}
+
+.splitview.horizontal .part:last-of-type .contentWrapper {
+    top: 1px;	/* smallSplitterThickness */
+}
+
+.splitview.horizontal .part:last-of-type .splitter {
+    top: 0; /* Glue the splitter to the top of the bottom part */
+}
+
+.splitview.horizontal .part:last-of-type .splitter.bold {
+    border-bottom: 1px solid #9B9B9B; /* smallSplitterColor */
+    height: 9px;
+}
+
+.splitview.horizontal .part:last-of-type .splitter.bold.moving {
+    border-top: 1px solid #9B9B9B; /* smallSplitterColor */
+    height: 10px;
+}

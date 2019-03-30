@@ -1,0 +1,887 @@
+/* timeScale see: MEWGanttTimeScaleComponent.h -----------------------------------------------------
+
+   Constants used multiple times in this style sheet:
+   borderColor    :		#9B9B9B
+
+*/
+
+.timeScale {
+/*    zoom: 125%; */
+    min-width: 100%;
+    position: relative;
+/*    background-color: #ebebeb !important; */
+}
+
+.timeScale .tier {
+    border-bottom: 1px solid #9B9B9B;	/* borderColor */
+    overflow: hidden;
+    position: relative;
+}
+
+.timeScale .tier .cell {
+
+	/* We use border-box, because we don't want to fumble around with positioning borders outside the cell.
+	   This would complicate the layout algorithm. For now the vertical line "between" cells is always part of the preceding cell. */
+    -moz-box-sizing: border-box;	 /* This is by intention, otherwise this setting wouldn't be recognized by Firefox. */
+    box-sizing: border-box;
+    border-right: 1px solid #9B9B9B; /* borderColor */
+    position: absolute;
+    text-align: center;
+    overflow:hidden;
+}
+
+.timeScale .tier .cell.nonworking {
+    background-color: rgba(60%, 60%, 60%, 0.25);
+}
+
+.timeScale .tier.first .cell {
+    border-top: 1px solid white;	/* This is the higlight at the top of a cell */
+}
+
+/* "measuring" contains rows for measuring the minimum height of a row.
+    Also read the related comment at the start of this file. */
+.timeScale .measuring {
+	width: 0px;
+	float: left;	
+}
+
+.timeScale .measuring .tier {
+	visibility:hidden;
+}
+
+.timeScale .measuring .tier .cell {
+    /* In contrast to visible cells, this cell is positioned relative and therfor not taken out of the document flow. */
+    position: relative;
+
+    /* Adjust the height to match the content */
+    height: auto;
+	float: left;
+}
+
+/* Bars see: MEWGanttChartGroupRowComponent.h ----------------------------------------------------- */
+
+.invisible {
+    visibility: hidden;
+}
+
+.invisibleText {
+    visibility: hidden;
+}
+
+.invisibleText:after {
+    content:"Mgj";
+}
+
+
+.innerGanttCell {
+    position:relative;
+}
+
+/* posAnchor is assigned to a div inside td elements to act as an anchor for relatively or absolutely positioned elements,
+   because assigning "position:relative" to the td element has not the desired effect in all browsers. */
+.posAnchor {
+	width: 100%; 
+    position: relative;
+/*
+    top: 50%;
+    transform: translateY(-50%);
+    -webkit-transform: translateY(-50%);
+*/
+/*
+    border: 1px solid green;
+*/
+}
+
+/*
+.posAnchor.histogram {
+    position:absolute;
+    top:0px;
+    bottom:0px;
+}
+*/
+
+.gantt,
+.labelView{
+	z-index: 0;	/* Make this z-index the base for all including elements */
+    overflow-x: hidden;
+    min-width: 100%;
+    position:relative;
+}
+
+
+.gantt table {
+	border-spacing: 0px;
+	border-collapse:separate;
+	table-layout: fixed;
+}
+
+.gantt table td {
+    padding: 0px;
+    vertical-align: middle;
+}
+
+.gantt table td.hidden {
+    width: 0.1px; /* hidden tds contain the otherTableRowDiv which is used to set the height of the row. They have o width but 0px does not work. */
+}
+
+/* Labels ------------------------------------------------------------------------------------------- */
+
+.gantt .label{
+    white-space:nowrap;
+    overflow: visible;
+/*    line-height: 1.5; */
+}
+
+.gantt .middleLabel {
+	padding-left: 2px;
+    text-overflow:clip;
+	white-space:nowrap;
+	overflow: visible;
+}
+
+.gantt .leftLabel {
+	text-align: right;
+	padding-right: 15px;	
+	direction: initial;
+    text-overflow:ellipsis;
+	overflow: hidden;
+    display: inline-block;
+}
+
+.gantt .rightLabel {
+	text-align: left;
+	padding-left: 15px;
+    text-overflow:clip;
+	overflow: visible;
+    display: inline-block;
+}
+
+.gantt .barContainer {
+	table-layout: fixed;
+	border-spacing: 0px;
+/*	padding-top: 3px; */
+
+    /* IE9 fix: The max-width of a td element isn't respected if the table width isn't set. */
+    width:100%;
+
+    position: relative;
+    padding-bottom: 3px;
+    z-index: 100;				    /* Put the bar in front of the background bar. */
+}
+
+.gantt .bar {	
+    min-height:0 !important; /* min-height is not supported in merlin web */
+    position: relative;
+	padding: 0px;
+	border-style: solid;
+	border-radius: 3px;
+	border-width: 1px;
+    border-color: currentColor;
+	overflow: hidden;
+	width: 100px;
+    background-repeat:no-repeat;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.gantt .referenceBar {
+    background-repeat:no-repeat;
+}
+
+.gantt .bar .completed {
+	position: absolute;
+	top: 0px;
+	height: 100%;
+	overflow: hidden;
+    background-color: currentColor;
+}
+
+
+.gantt .bar .completed.fully {
+    overflow:visible;
+}
+
+.gantt .bar .completed.fully::after {
+    content:    "";
+    position: absolute;
+    display: block;
+    width:0.43em;
+    height:100%;
+    top:0px;
+    right:-0.43em;
+    background-color:currentColor;
+    background-image:inherit;
+}
+
+
+.gantt .beam.row td{
+	display: inline-block;	
+	display: table-cell;
+	vertical-align: middle;
+}
+
+.gantt .barContainer.overlapping {
+	padding-bottom: 8px;            /* Must be the same value as in .gantt .barContainer.secondary.overlapping (a few lines below) */
+}
+
+.gantt .barContainer.secondary {
+	padding-top: 4px;
+	padding-bottom: 0px;
+	position: absolute; 
+	top: 0px; 
+	left: 0px; 
+	z-index: 0;	/* Reset the z-index of backgrounbd bars to zero to put them behind normal bars.  */
+}	
+
+.gantt .barContainer.secondary.overlapping {
+	padding-top: 8px;               /* Must be the same value as in .gantt .barContainer.overlapping (a few lines above) */
+}
+
+/*
+    The bar enclosing the referenceBar always should not draw itself.
+    So we force all of the following rules.
+*/
+.gantt .beam.row .barContainer.secondary .bar {
+	background-image: none !important;
+	filter: none !important;
+    box-shadow: none !important;
+    background-color: transparent !important;
+    border:none !important;
+    overflow:visible !important;
+}
+
+.gantt .beam.row .barContainer.secondary .bar .referenceBar {
+    border: 1px solid currentColor;
+    border-radius: 3px;
+}
+
+.gantt .beam.row .barContainer.secondary .bar .label .middleLabel {
+	visibility:hidden;
+}
+
+.gantt .beam.row .barContainer .label .leftLabel span {
+	visibility:hidden;
+}
+
+.gantt .beam.row .barContainer.secondary .label .leftLabel span {
+	visibility:visible;
+}
+
+.gantt .beam.row .barContainer .label .rightLabel span {
+	visibility:visible;
+}
+
+.gantt .beam.row .barContainer.secondary .label .rightLabel span {
+	visibility: hidden;
+}
+
+.gantt .rows {
+	min-width: 100%;
+}
+
+.gantt .rows .row:nth-child(odd){
+	background-image: 0;
+}
+
+.gantt .rows .row:nth-child(even){
+	background-image: 0;
+}
+
+.gantt .rows .otherTableRowDiv {
+    width: 0px;
+}
+
+
+/* Groups see: MEWGanttChartGroupRowComponent.h ----------------------------------------------------- */
+
+.gantt .group.row .barContainer{
+	position: relative;	
+	border-collapse: separate;
+	border-spacing: 0px;
+    table-layout: fixed;
+    width: 100%;
+/*    padding-bottom: 10px; */
+    z-index: 100;           /* Put the group in front of the background bar. */
+}
+
+.gantt .group.row left {
+    text-align: left;
+    padding-left: 10px;
+}
+
+.gantt .group.row right {
+    text-align: right;
+    padding-right: 10px;
+}
+
+.gantt .group.row .middleLabel,
+.gantt .group.row .groupMiddle {
+	overflow: visible;
+	position: relative;
+	padding-left: 0;
+	height: 1em;
+}
+
+.gantt .group.row .barContainer td:last-child *,
+.gantt .group.row .barContainer td:first-child * {
+    display: inline-block;
+}
+
+.gantt .row .barContainer td:first-child {
+    direction:rtl;
+}
+
+.gantt .spacer {
+    position: relative;
+    width: 0.24em;
+    height:1px;
+    z-index: 200;
+    visibility: hidden;
+}
+
+.gantt .group.row .barContainer .bar {  
+	-moz-box-sizing: content-box;
+	box-sizing: content-box;
+    min-height:0 !important; /* min-height is not supported in merlin web */
+    overflow: visible;
+    position: relative;
+    border-radius: 3px;
+    border: 1px solid;
+    border-color:currentColor;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+    margin-bottom: 0.5em;
+    z-index: 0;
+    height: 0.35em;
+	left: -0.35em;
+    margin-left: -1px; 
+/*    padding-right: 0.707em; */
+
+    padding-right: 0.85em;
+    width: 100%;
+
+    /* The connection between the bar and the bar ends is fixed and without a variable border radius */
+    border-bottom-left-radius:0px !important;
+    border-bottom-right-radius:0px !important;
+}
+
+.gantt .group.row .barContainer .bar .completed {
+    position: absolute;
+    top: 0px;
+    padding-left: 0.4em;
+    width: 30px;
+    height: 100%;
+    background-color: currentColor;
+}
+
+.gantt .group.row .ends {
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+/*	background-color: rgba(255, 0, 255, .75);*/
+    overflow: hidden;
+    position: absolute;
+    top: 100%;
+    left: -1px;
+	right: -1px;
+    height: 1em;
+    z-index: 10;
+}
+
+.gantt .group.row .ends .startClamp{
+    display:block;
+    position: absolute;
+    top:-0.56em;
+    margin-top:-1px;
+    width:0.85em;
+    height:0.85em;
+    -webkit-transform:rotate(45deg);
+    -moz-transform:rotate(45deg);
+    -ms-transform:rotate(45deg);
+    border: 1px solid currentColor;
+}
+
+.gantt .group.row .ends .endClamp {
+    display:block;
+    position: absolute;
+    right:0;
+    top:-0.56em;
+    margin-top:-1px;
+    width:0.85em;
+    height:0.85em;
+    -webkit-transform:rotate(45deg);
+    -moz-transform:rotate(45deg);
+    -ms-transform:rotate(45deg);
+    border: 1px solid currentColor;
+}
+
+/* ------------------ */
+
+.gantt .group.row .ends.fillStart .startClamp,
+.gantt .group.row .ends.fillEnd .endClamp
+{
+    background-color: currentColor !important;
+}
+
+.gantt .group.row .barContainer.secondary {
+	padding-top: 3px;
+	padding-bottom: 0px;
+	position: absolute; 
+	top: 0px; 
+	left: 0px; 
+	z-index: 0;	/* Reset the z-index of backgrounbd bars to zero to put them behind normal bars.  */
+}	
+		
+.gantt .group.row .barContainer.secondary .bar,
+.gantt .group.row .barContainer.secondary .ends .startClamp,
+.gantt .group.row .barContainer.secondary .ends .endClamp {
+	background-image: none;
+	filter: none;
+}
+
+.gantt .group.row .barContainer.secondary .bar {
+	border: none !important;
+	box-shadow: none !important;
+    background-image: none !important;
+}
+
+.gantt .group.row .barContainer.secondary .completed{
+    visibility: hidden;
+}
+
+.gantt .group.row .barContainer.secondary .referenceBar{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 1px solid currentColor;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
+
+
+/* Gantt lines ----------------------------------------------------------------------------------- */
+
+.gantt .ganttLines{
+    position: absolute;
+	width: 100%;
+	height: 100%;
+    top: 0px;
+	left: 0px;
+    z-index: 1;	/* == 1 : Put gantt lines between the background bars (z-index=0) and the foreground bars (z-index=100).*/
+	padding: 0;
+	margin: 0;
+    pointer-events:none;
+}
+
+.gantt .ganttLine{
+	border-style: solid;
+	border-color: rgb(0, 0, 0);
+	border-width: 1px;
+}
+
+
+
+/* Milestones see: MEWGanttChartMilestoneRowComponent.h ----------------------------------------- */
+
+.gantt .milestone.row .barContainer .rhombContainer .middleLabel {
+    padding:0;
+}
+
+.gantt .milestone.row .barContainer .bar.completed {
+    background-color: currentColor;
+}
+
+.gantt .milestone.row .barContainer .rhombContainer .rhomb {
+    position:relative;
+    -webkit-transform:rotate(45deg);
+    -moz-transform:rotate(45deg);
+    -ms-transform:rotate(45deg);
+    transform:rotate(45deg);
+    height: 1em;
+    width: 1em;
+    left: -0.5em;
+
+    margin-top:    0.5ex;
+    margin-bottom: 0.5ex;
+}
+
+.gantt .milestone.row .barContainer .rhombContainer .rhomb .bar {
+    position:absolute;
+    border-color: currentColor;
+    border-radius:0;
+    width:100%;
+    height:100%;
+    min-height:0 !important; /* we don't support min-height in the web */
+}
+
+.gantt .milestone.row .barContainer .rhombContainer .rhomb .bar .completed {
+    position: absolute;
+       width: 100%;
+      height: 100%;
+}
+
+.gantt .milestone.row .barContainer.secondary .rhombContainer .rhomb .bar {
+    background-image: none;
+    filter: none;
+    box-shadow: none !important; /* the shadow is always drawn by the reference bar, not the bar */
+    border-style:solid;
+    width:100%;
+    height:100%;
+    left:0;
+    position:static;
+    overflow:hidden;
+    border:none !important;
+}
+
+.gantt .milestone.row .barContainer.secondary .rhombContainer .rhomb .bar .referenceBar {
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    position:absolute;
+    width:100%;
+    height:100%;
+    border: 1px solid currentColor;
+}
+
+
+.gantt .milestone.bar,
+.gantt .milestone.referenceBar{
+    border-radius:0 !important;
+    margin-top:0 !important;
+}
+
+.gantt .milestone.row .rhombContainer {
+    position:relative;
+    width:0;
+    vertical-align:middle;
+}
+
+.gantt .milestone.row .label .middleLabel{
+    padding:0;
+}
+
+.gantt .milestone.row .barContainer td:first-child *,
+.gantt .milestone.row .barContainer td:last-child * {
+    display: inline-block;
+}
+
+.gantt .milestone.row .barContainer td:first-child .spacer {
+    /* Eliminate space between the spacer and the label,
+       because otherwise browsers will add some space between inline-blocks,
+       like they would do for text. */
+    float: right;
+}
+
+.gantt .milestone.row .barContainer td:last-child .spacer {
+    /* See note in previous rule. */
+    float: left;
+}
+
+.gantt .milestone.row .barContainer td:first-child {
+    direction:rtl;
+}
+
+.gantt .milestone.row .spacer.middleLabel {
+    width: 0.75em;
+}
+
+.gantt .milestone.row .barContainer.overlapping {
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+/* Timephase boxes ------------------------------------------------------------------------------ */
+
+
+.gantt .timePhase .timePhaseSubrow1,
+.gantt .timePhase .timePhaseSubrow2,
+.gantt .timePhase .timePhaseSubrow3 {
+    position: relative;
+    box-sizing: border-box;
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+}
+
+
+.gantt .timePhase .hbox1 {
+    position:absolute;
+    background-color:rgba(0,255,0,0.5);
+    padding:0px !important;
+    box-sizing: border-box;
+}
+
+.gantt .timePhase .hbox1.flatTop {
+    border-top-left-radius: 0px !important;
+    border-top-right-radius: 0px !important;
+}
+
+.gantt .timePhase .hbox2 {
+    position:absolute;
+    background-color:rgba(255,0,0,0.5);
+    padding:0px !important;
+    box-sizing: border-box;
+    border-bottom-left-radius: 0px !important;
+    border-bottom-right-radius: 0px !important;
+    border-bottom: 0px !important;
+}
+
+.gantt .timePhase .hlabel  {
+    position:absolute;
+/*    background-color:rgba(255,0,0,0.2); */
+    white-space:nowrap;
+    overflow:hidden;
+    bottom:0px;
+}
+
+.gantt .timePhase .hcontentlabel  {
+    background-color:pink;
+}
+
+.gantt .timePhase .hlabel div {
+    position:relative;
+    top:50%;
+    transform: translateY(-50%);
+    -webkit-transform: translateY(-50%);
+    white-space: nowrap;
+    overflow: hidden;
+    height:1.3em;
+    text-align:center;
+    margin-left: 0.1em;
+    margin-right: 0.1em;
+}
+
+.innerSubrow {
+    position:relative;
+    box-sizing: border-box;
+    height:100%;
+
+	display: -webkit-flex;
+	-webkit-align-items: center;
+	-webkit-box-align: center;
+
+    /*background-color: rgba(0,0,255, 0.1);*/
+}
+
+.timePhaseLabelsColumn .content.background {
+    /* The related background color in Merlin is defined in METheme defaultProjectViewBackgroundColor */
+    background-color: rgba(251, 251, 251, 1.0);
+}
+
+.gantt .timePhase .box,
+.timePhaseLabelsColumn .timePhase .box{
+    position: absolute;
+    background-color: lightgreen;
+    text-align: center;
+    white-space: nowrap;
+    background-repeat:no-repeat;
+    box-sizing:border-box;
+    border-color: currentcolor;
+    height:100%;
+}
+
+.noneWebkit .timePhase .box{
+
+    /* vertically center the box see: http://zerosixthree.se/vertical-align-anything-with-just-3-lines-of-css/ */
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+}
+
+
+/*
+
+.gantt .timePhase .histogram .box {
+    background-color: transparent !important;
+    background-image:none !important;
+}
+
+.gantt .timePhase .histogram .box,
+.timePhaseLabelsColumn .timePhase.histogram .box {
+    top: auto;
+    transform: none;
+    -webkit-transform: none;
+}
+
+.gantt .timePhase .histogram .box,
+.timePhaseLabelsColumn .timePhase.histogram .box {
+    border-collapse:collapse;
+}
+
+.gantt .timePhase .histogram .box td{
+    border:1px solid blue;
+}
+
+.gantt .timePhase .histogram .box td:last-of-type{
+    top: auto;
+    transform: none;
+    -webkit-transform: none;
+    height: 100%;
+    vertical-align:middle;
+}
+
+*/
+
+.gantt .timePhase .box.invisible{
+    position: relative;
+    visibility: hidden;
+    height: auto;
+    width: 10px;
+    display: inline-block; /*table-cell*/
+}
+
+.gantt .timePhase .box .tplabel{
+    height: auto;
+    margin-left: 0.2em;
+    margin-right: 0.2em;
+    overflow-x:hidden;
+    position:relative;
+    top:50%;
+    transform: translateY(-50%);
+    -webkit-transform: translateY(-50%);
+}
+
+.gantt .timePhase .box.invisible .tplabel {
+    position:relative;
+    height: auto;
+    top: 0;
+    width: 0;
+}
+
+
+/* Vertical Ruler ------------------------------------------------------------------------------ */
+
+.timePhaseLabelsColumn.vertical.ruler {
+	position: relative;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+/*	border-right: 1px solid #9B9B9B; */
+    overflow-x:scroll;
+}
+
+.scrollview .verticalRulerSplitterHandle{
+    border-left: 1px solid #9B9B9B;
+}
+
+.timePhaseLabelsColumn.vertical.ruler .corner	{
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	border-bottom: 1px solid #9B9B9B;
+}		     	
+
+.timePhaseLabelsColumn.vertical.ruler .labelView {
+	min-width: 100%;
+	width: 100%;
+	border-spacing: 0;
+	border-collapse: separate;
+	table-layout: fixed;
+	padding: 0px;
+}
+
+.timePhaseLabelsColumn.vertical.ruler .labelView tr:nth-child(odd){
+	background-color: #FDFDFD;
+}	
+
+.timePhaseLabelsColumn.vertical.ruler .labelView tr:nth-child(even){
+	background-color: #F3F3F3;
+}	
+
+
+.timePhaseLabelsColumn.vertical.ruler .labelView .histogram table {
+    height:100%;
+    width:100%;
+    text-align:right;
+    table-layout:fixed;
+    border-collapse:collapse;
+}
+
+.timePhaseLabelsColumn.vertical.ruler .labelView .histogram table tr{
+	background-color: transparent;
+    white-space:nowrap;
+}
+
+.timePhaseLabelsColumn.vertical.ruler .labelView .histogram table tr td:first-of-type{
+/*    background-color: rgba(0,0,255, 0.05); */
+}
+
+
+.timePhaseLabelsColumn.vertical.ruler .labelView .histogram table tr td:last-of-type{
+/*    background-color: rgba(0,0,255, 0.1); */
+/*    width: -moz-min-content;
+    width: -webkit-min-content;
+*/
+/*     min-width: 40px; */
+}
+
+.timePhaseLabelsColumn.vertical.ruler .labelView .histogram table tr td .tplabel{
+    text-align: right !important;
+    text-overflow:ellipsis;
+    overflow-x: hidden; /* text-overflow does only work if overflow is also set */
+}
+
+.timePhaseLabelsColumn.vertical.ruler .labelView .histogram table tr td .tick {
+    position:absolute;
+    background-color: gray;
+    border-top: 1px solid gray;
+    width: 6px;
+    height:0px;
+    right:0px;
+}
+
+.timePhaseLabelsColumn.vertical.ruler .labelView .histogram table tr td .tickLabel {
+    position:absolute;
+    right:8px;
+    top:50%;
+    transform: translateY(-50%);
+    -webkit-transform: translateY(-50%);
+}
+
+.timePhaseLabelsColumn.vertical.ruler .labelView .histogram table tr td .tplabel.invisible {
+    padding-right:8px;
+    white-space:nowrap;
+}
+
+/* Labels inside vertical ruler ----------------------------------------------------------------- */
+
+.timePhaseLabelsColumn.vertical.ruler .labelView .timePhaseSubrow1,
+.timePhaseLabelsColumn.vertical.ruler .labelView .timePhaseSubrow2,
+.timePhaseLabelsColumn.vertical.ruler .labelView .timePhaseSubrow3{
+    position: relative;
+    box-sizing: border-box;
+/*    padding-top: 0px !important;
+    padding-bottom: 0px !important; */
+}
+
+.timePhaseLabelsColumn.vertical.ruler .labelView .box.visible {
+    padding-right:0.5em !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    border-color: rgba(0,0,0,0) !important;
+    width:100%;
+}
+
+.timePhaseLabelsColumn.vertical.ruler .labelView .box.visible .tplabel {
+    text-align: right !important;
+    text-overflow:ellipsis;
+    overflow-x: hidden; /* text-overflow does only work if overflow is also set */
+}
+
+.timePhaseLabelsColumn.vertical.ruler .labelView .box.invisible {
+    position: relative;
+    visibility: hidden;
+    height: auto;
+    width: 10px;
+    display: inline-block;
+}
+
+.timePhaseLabelsColumn.vertical.ruler .labelView td.hidden {
+    padding:0px;
+}
+
+.invisible {
+    visibility:hidden;
+}
+
+/* Others ----------------------------------------------------------------- */
+
+/* This is an additional element wrapped around labels inside gantt bars. It is needed to measure the width of the text.*/
+
+.textWrapper {
+    display:inline-block;
+}
