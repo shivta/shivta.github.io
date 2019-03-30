@@ -83,7 +83,7 @@
     Компетенция     
         - HTML (SASS/SCSS/LESS)
 
-### [QA](https://jobs.dou.ua/salaries/#period=dec2018&city=Kyiv&title=QA%20engineer&language=&spec=General%20QA&exp1=2&exp2=5)(инженер по оюеспечениюкачества/ тестировщик)
+### [QA](https://jobs.dou.ua/salaries/#period=dec2018&city=Kyiv&title=QA%20engineer&language=&spec=General%20QA&exp1=2&exp2=5)(инженер по обеспечению качества/ тестировщик)
 
     Ответвенность
      - обеспечение тестирования качества на всех этапах
